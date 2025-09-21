@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
   process.env.DB_USER || 'vishal',
   process.env.DB_PASSWORD || 'lGqS47qiKHeG8hYA0F35ERNwJGcNqcIH',
   {
-    host: process.env.DB_HOST || 'dpg-d3809c1r0fns73fc8jgg-a',
+    host: process.env.DB_HOST || 'postgresql://vishal:lGqS47qiKHeG8hYA0F35ERNwJGcNqcIH@dpg-d3809c1r0fns73fc8jgg-a.oregon-postgres.render.com/minordb_12il',
     dialect: dialect,
     logging: false,
     port: process.env.DB_PORT || 5432,
@@ -30,3 +30,4 @@ const testConnection = async () => {
 testConnection();
 
 module.exports = sequelize;
+
