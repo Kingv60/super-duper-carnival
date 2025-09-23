@@ -4,6 +4,7 @@ const Category = require('./Category');
 const Expense = require('./Expense');
 const Budget = require('./Budget');
 const SharedList = require('./SharedList');
+const SharedExpense = require('./SharedExpense');
 
 // Define associations after all models are loaded
 User.hasMany(Category, { foreignKey: 'userId', onDelete: 'CASCADE' });
@@ -18,17 +19,30 @@ Expense.belongsTo(Category, { foreignKey: 'categoryId' });
 User.hasMany(Budget, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Budget.belongsTo(User, { foreignKey: 'userId' });
 
+// Shared List & Expenses
+User.hasMany(SharedList, { foreignKey: 'ownerId', onDelete: 'CASCADE' });
+SharedList.belongsTo(User, { foreignKey: 'ownerId' });
+
+SharedList.hasMany(SharedExpense, { foreignKey: 'sharedListId', onDelete: 'CASCADE' });
+SharedExpense.belongsTo(SharedList, { foreignKey: 'sharedListId' });
+
+User.hasMany(SharedExpense, { foreignKey: 'userId' });
+SharedExpense.belongsTo(User, { foreignKey: 'userId' });
+
 module.exports = {
   sequelize,
   User,
   Category,
   Expense,
   Budget,
+  SharedList,
+  SharedExpense,
 };
 
 // Also export individual models for direct import
 module.exports.User = User;
 module.exports.Category = Category;
 module.exports.Expense = Expense;
-module.exports.SharedList = SharedList;
 module.exports.Budget = Budget;
+module.exports.SharedList = SharedList;
+module.exports.SharedExpense = SharedExpense;
