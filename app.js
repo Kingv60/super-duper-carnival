@@ -6,7 +6,8 @@ const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
-const sharedListRoutes = require('./routes/sharedListRoutes');  
+const sharedListRoutes = require('./routes/sharedListRoutes'); 
+const profileRoutes = require('./routes/profileRoutes');
 
 const errorMiddleware = require('./middleware/errorMiddleware');
 const { sequelize } = require('./models'); // Import from models/index.js
@@ -33,6 +34,8 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/shared', sharedListRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use('/api/profile', profileRoutes);
 
 app._router.stack.forEach(middleware => {
   if(middleware.route) {
