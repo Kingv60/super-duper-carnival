@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   createSharedList,
+  joinSharedList,
   addSharedExpense,
   getSharedExpenses,
   deleteSharedList,
@@ -12,7 +13,9 @@ const router = express.Router();
 // Create a new shared list
 router.post('/create', createSharedList);
 
-router.post('/join', joinSharedList);  
+// Join a shared list
+router.post('/join', joinSharedList);
+
 // Add expense to shared list
 router.post('/expense', addSharedExpense);
 
