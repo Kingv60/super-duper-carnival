@@ -79,18 +79,20 @@ const getSharedExpenses = async (req, res) => {
 
 // Delete a shared list along with its expenses
 const deleteSharedList = async (req, res) => {
-  const { id } = req.query;  // get list id from query
+  const { id, userId } = req.query;  // list id + optional userId
   if (!id) return res.status(400).json({ message: 'List id required' });
 
   try {
     const list = await SharedList.findByPk(id);
     if (!list) return res.status(404).json({ message: 'Shared list not found' });
 
-    // Delete all expenses
+    // Optional ownership check
+    if (userId && list.ownerId != userId) {
+      return res.status(403).json({ message: 'You are not the owner of this list' });
+    }
+
     await SharedExpense.destroy({ where: { sharedListId: id } });
-    // Delete all join relations
     await SharedListUser.destroy({ where: { sharedListId: id } });
-    // Delete list
     await SharedList.destroy({ where: { id } });
 
     res.json({ message: 'Shared list and its expenses deleted successfully' });
@@ -98,6 +100,7 @@ const deleteSharedList = async (req, res) => {
     res.status(500).json({ message: 'Failed to delete shared list', error: error.message });
   }
 };
+
 
 
 // Get all lists for a user (created or joined)
