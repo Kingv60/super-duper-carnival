@@ -1,9 +1,10 @@
-// routes/sharedListRoutes.js
 const express = require('express');
 const {
   createSharedList,
   addSharedExpense,
-  getSharedExpenses
+  getSharedExpenses,
+  getUserSharedLists,
+  deleteSharedList
 } = require('../controllers/sharedListController');
 
 const router = express.Router();
@@ -16,5 +17,11 @@ router.post('/expense', addSharedExpense);
 
 // Get expenses for a shared list
 router.get('/expenses', getSharedExpenses);
+
+// Get all shared lists for a user
+router.get('/user-lists', getUserSharedLists);
+
+// Delete a shared list (owner only)
+router.delete('/delete', deleteSharedList);
 
 module.exports = router;
