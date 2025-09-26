@@ -23,9 +23,9 @@ router.post('/expense', addSharedExpense);
 router.get('/expenses', getSharedExpenses);
 
 // Delete a shared list by id
-router.delete('/:id', deleteSharedList);
+router.delete('/', deleteSharedList);
 
 // Get all lists for a user (created and joined)
-router.get('/user/:userId', getUserLists);
+router.get('/user', getUserLists);
 
 module.exports = router;
