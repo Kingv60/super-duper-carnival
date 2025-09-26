@@ -79,7 +79,7 @@ const getSharedExpenses = async (req, res) => {
 
 // Delete a shared list along with its expenses
 const deleteSharedList = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.query;  // get list id from query
   if (!id) return res.status(400).json({ message: 'List id required' });
 
   try {
@@ -99,9 +99,10 @@ const deleteSharedList = async (req, res) => {
   }
 };
 
+
 // Get all lists for a user (created or joined)
 const getUserLists = async (req, res) => {
-  const { userId } = req.params;
+  const { userId } = req.query;  // get userId from query
   if (!userId) return res.status(400).json({ message: 'userId required' });
 
   try {
