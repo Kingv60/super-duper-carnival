@@ -16,6 +16,30 @@ const createSharedList = async (req, res) => {
   }
 };
 
+// Join a shared list using shareCode
+const joinSharedList = async (req, res) => {
+  const { userId, shareCode } = req.body;
+  if (!userId || !shareCode) return res.status(400).json({ message: 'userId and shareCode required' });
+
+  try {
+    const list = await SharedList.findOne({ where: { shareCode } });
+    if (!list) return res.status(404).json({ message: 'Shared list not found' });
+
+    // Check if user already joined
+    const alreadyJoined = await SharedListUser.findOne({
+      where: { sharedListId: list.id, userId }
+    });
+    if (alreadyJoined) return res.status(400).json({ message: 'User already joined this list' });
+
+    // Add user to the shared list
+    const join = await SharedListUser.create({ sharedListId: list.id, userId });
+
+    res.status(201).json({ message: 'Joined shared list successfully', join });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to join shared list', error: error.message });
+  }
+};
+
 // Add expense to shared list
 const addSharedExpense = async (req, res) => {
   const { shareCode, userId, description, amount } = req.body;
@@ -64,6 +88,8 @@ const deleteSharedList = async (req, res) => {
 
     // Delete all expenses
     await SharedExpense.destroy({ where: { sharedListId: id } });
+    // Delete all join relations
+    await SharedListUser.destroy({ where: { sharedListId: id } });
     // Delete list
     await SharedList.destroy({ where: { id } });
 
@@ -85,7 +111,9 @@ const getUserLists = async (req, res) => {
     // Lists joined by the user
     const joinedListRelations = await SharedListUser.findAll({ where: { userId } });
     const joinedListIds = joinedListRelations.map(rel => rel.sharedListId);
-    const joinedLists = await SharedList.findAll({ where: { id: joinedListIds } });
+    const joinedLists = joinedListIds.length > 0
+      ? await SharedList.findAll({ where: { id: joinedListIds } })
+      : [];
 
     res.json({ createdLists, joinedLists });
   } catch (error) {
@@ -95,6 +123,7 @@ const getUserLists = async (req, res) => {
 
 module.exports = {
   createSharedList,
+  joinSharedList,
   addSharedExpense,
   getSharedExpenses,
   deleteSharedList,
