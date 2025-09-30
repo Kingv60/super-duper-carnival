@@ -6,6 +6,7 @@ const Budget = require('./Budget');
 const SharedList = require('./SharedList');
 const SharedExpense = require('./SharedExpense');
 const SharedListUser = require('./SharedListUser');
+const Profile = require('./Profile'); // <-- added
 
 // Associations
 User.hasMany(Category, { foreignKey: 'userId', onDelete: 'CASCADE' });
@@ -37,9 +38,14 @@ SharedList.hasMany(SharedListUser, { foreignKey: 'sharedListId' });
 SharedListUser.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' });
 User.hasMany(SharedListUser, { foreignKey: 'userId' });
 
+// Profile association
+User.hasOne(Profile, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Profile.belongsTo(User, { foreignKey: 'userId' });
+
 module.exports = {
   sequelize,
   User,
+  Profile,   // <-- exported
   Category,
   Expense,
   Budget,
