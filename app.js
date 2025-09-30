@@ -1,67 +1,56 @@
 const express = require('express');
 const bodyParser = require('express').json;
 const cors = require('cors');
+const path = require('path');
 
 const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
 const sharedListRoutes = require('./routes/sharedListRoutes');  
+const profileRoutes = require('./routes/profile'); // <-- added
 
 const errorMiddleware = require('./middleware/errorMiddleware');
-const { sequelize } = require('./models'); // Import from models/index.js
+const { sequelize } = require('./models');
 
 const app = express();
 
-// CORS middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 
-// Body parser middleware
 app.use(bodyParser());
 
-// Logging middleware - logs every incoming request
+// Serve upload folder
+app.use('/upload', express.static(path.join(__dirname, 'upload')));
+
+// Logging middleware
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.path}`);
   next();
 });
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/shared', sharedListRoutes);
+app.use('/api/profile', profileRoutes); // <-- added
 
-app._router.stack.forEach(middleware => {
-  if(middleware.route) {
-    console.log(`[Route] ${Object.keys(middleware.route.methods)[0].toUpperCase()} - ${middleware.route.path}`)
-  }
-});
-
-
-// 404 handler - must come after all routes
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Global error handler middleware - last
+// Global error handler
 app.use(errorMiddleware);
 
+// Start server
 const PORT = process.env.PORT || 3000;
-
-// Sync database and start server
-sequelize.sync({ force: false }) // Use force: true only for development to recreate tables
+sequelize.sync({ force: false })
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
-  .catch(err => console.error('Failed syncing database:',
-    
-    
-    err));
-
-
-  
+  .catch(err => console.error('Failed syncing database:', err));
