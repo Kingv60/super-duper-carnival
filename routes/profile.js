@@ -43,9 +43,12 @@ router.post('/update', upload.single('image'), async (req, res) => {
 });
 
 // Get profile by userId
-router.get('/:userId', async (req, res) => {
+router.get('/', async (req, res) => {
+  const userId = req.query.userId;  // get userId from query
+  if (!userId) return res.status(400).json({ success: false, message: 'userId is required' });
+
   try {
-    const profile = await Profile.findOne({ where: { userId: req.params.userId } });
+    const profile = await Profile.findOne({ where: { userId } });
     if (!profile) return res.status(404).json({ success: false, message: 'Profile not found' });
 
     res.json({ success: true, profile });
@@ -54,6 +57,7 @@ router.get('/:userId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
 
 // Delete profile by userId
 router.delete('/:userId', async (req, res) => {
