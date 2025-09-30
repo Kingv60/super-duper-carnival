@@ -60,9 +60,12 @@ router.get('/', async (req, res) => {
 
 
 // Delete profile by userId
-router.delete('/:userId', async (req, res) => {
+router.delete('/', async (req, res) => {
+  const userId = req.query.userId;  // get userId from query
+  if (!userId) return res.status(400).json({ success: false, message: 'userId is required' });
+
   try {
-    const profile = await Profile.findOne({ where: { userId: req.params.userId } });
+    const profile = await Profile.findOne({ where: { userId } });
     if (!profile) return res.status(404).json({ success: false, message: 'Profile not found' });
 
     // Delete image file if exists
