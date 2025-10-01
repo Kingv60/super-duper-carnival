@@ -16,8 +16,9 @@ router.use(authMiddleware);
 // Expense routes
 router.post('/', createExpense);       // Create expense
 router.get('/', getExpenses);          // Get all expenses
-router.put('/:param', updateExpense);
-router.delete('/:param', deleteExpense);
+router.put('/', updateExpense);    // use query params
+router.delete('/', deleteExpense); // use query params
 
 module.exports = router;
+
 
