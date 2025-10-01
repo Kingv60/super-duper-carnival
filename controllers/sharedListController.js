@@ -62,6 +62,68 @@ const addSharedExpense = async (req, res) => {
   }
 };
 
+// Update expense in a shared list
+const updateSharedExpense = async (req, res) => {
+  const { id, userId, shareCode, description, amount } = req.body;
+  if (!id || !userId || !shareCode) {
+    return res.status(400).json({ message: 'id, userId, and shareCode required' });
+  }
+
+  try {
+    // Verify shared list
+    const list = await SharedList.findOne({ where: { shareCode } });
+    if (!list) return res.status(404).json({ message: 'Shared list not found' });
+
+    // Find the expense
+    const expense = await SharedExpense.findOne({ where: { id, sharedListId: list.id } });
+    if (!expense) return res.status(404).json({ message: 'Expense not found' });
+
+    // Only owner of expense can update
+    if (expense.userId != userId) {
+      return res.status(403).json({ message: 'Not authorized to update this expense' });
+    }
+
+    // Update fields
+    if (description !== undefined) expense.description = description;
+    if (amount !== undefined) expense.amount = amount;
+
+    await expense.save();
+
+    res.json({ message: 'Expense updated successfully', expense });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update expense', error: error.message });
+  }
+};
+
+// Delete expense from a shared list
+const deleteSharedExpense = async (req, res) => {
+  const { id, userId, shareCode } = req.query;
+  if (!id || !userId || !shareCode) {
+    return res.status(400).json({ message: 'id, userId, and shareCode required' });
+  }
+
+  try {
+    // Verify shared list
+    const list = await SharedList.findOne({ where: { shareCode } });
+    if (!list) return res.status(404).json({ message: 'Shared list not found' });
+
+    // Find the expense
+    const expense = await SharedExpense.findOne({ where: { id, sharedListId: list.id } });
+    if (!expense) return res.status(404).json({ message: 'Expense not found' });
+
+    // Only owner of expense can delete
+    if (expense.userId != userId) {
+      return res.status(403).json({ message: 'Not authorized to delete this expense' });
+    }
+
+    await expense.destroy();
+    res.json({ message: 'Expense deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete expense', error: error.message });
+  }
+};
+
+
 // Get expenses for a shared list
 const getSharedExpenses = async (req, res) => {
   const { shareCode } = req.query;
@@ -131,5 +193,7 @@ module.exports = {
   addSharedExpense,
   getSharedExpenses,
   deleteSharedList,
-  getUserLists
+  getUserLists,
+  updateSharedExpense,
+  deleteSharedExpense
 };
