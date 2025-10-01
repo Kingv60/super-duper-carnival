@@ -61,12 +61,14 @@ const getExpenses = async (req, res) => {
 
 // UPDATE EXPENSE
 const updateExpense = async (req, res) => {
-  const { id } = req.params;
-  const { userId, amount, description, date, receiptUrl } = req.body;
-
-  if (!userId) return res.status(400).json({ message: 'userId is required' });
-
   try {
+    const { param } = req.params;
+    const [userPart, idPart] = param.split('&');
+    const userId = userPart.split(':')[1];
+    const id = idPart.split(':')[1];
+
+    const { amount, description, date, receiptUrl } = req.body;
+
     const expense = await Expense.findOne({ where: { id, userId } });
     if (!expense) return res.status(404).json({ message: 'Expense not found' });
 
@@ -77,19 +79,19 @@ const updateExpense = async (req, res) => {
   }
 };
 
-// DELETE EXPENSE
+// Delete expense
 const deleteExpense = async (req, res) => {
-  const { id } = req.params;
-  const { userId } = req.body;
-
-  if (!userId) return res.status(400).json({ message: 'userId is required' });
-
   try {
+    const { param } = req.params;
+    const [userPart, idPart] = param.split('&');
+    const userId = userPart.split(':')[1];
+    const id = idPart.split(':')[1];
+
     const expense = await Expense.findOne({ where: { id, userId } });
     if (!expense) return res.status(404).json({ message: 'Expense not found' });
 
     await expense.destroy();
-    res.json({ message: 'Expense deleted' });
+    res.json({ message: 'Expense deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete expense', error: error.message });
   }
@@ -101,3 +103,4 @@ module.exports = {
   updateExpense,
   deleteExpense,
 };
+
