@@ -3,13 +3,11 @@ const { Op } = require('sequelize');
 
 // CREATE EXPENSE
 const createExpense = async (req, res) => {
-  const { userId } = req.body; // Ab POST me userId bhejna hoga
-  const { amount, description, date, receiptUrl } = req.body;
+  const { userId, amount, description, date, receiptUrl } = req.body;
 
   if (!userId) return res.status(400).json({ message: 'userId is required' });
 
   try {
-    // Deduplication guard: same user, same expense in last 5 seconds
     const recentWindowMs = 5000;
     const cutoff = new Date(Date.now() - recentWindowMs);
 
@@ -36,19 +34,17 @@ const createExpense = async (req, res) => {
       date,
       receiptUrl,
     });
+
     res.status(201).json(expense);
   } catch (error) {
     res.status(500).json({ message: 'Failed to create expense', error: error.message });
   }
 };
 
-// GET EXPENSES BY USER ID FROM URL
+// GET EXPENSES BY USER ID
 const getExpenses = async (req, res) => {
-  const { userId } = req.query; // ✅ query string se lena
-
-  if (!userId) {
-    return res.status(400).json({ message: 'userId parameter is required' });
-  }
+  const { userId } = req.query;
+  if (!userId) return res.status(400).json({ message: 'userId parameter is required' });
 
   try {
     const expenses = await Expense.findAll({ where: { userId } });
@@ -58,18 +54,17 @@ const getExpenses = async (req, res) => {
   }
 };
 
-
 // UPDATE EXPENSE
 const updateExpense = async (req, res) => {
   try {
-    const { param } = req.params;
-    const [userPart, idPart] = param.split('&');
-    const userId = userPart.split(':')[1];
-    const id = idPart.split(':')[1];
-
+    const { userId, Id } = req.query; // Get both from query params
     const { amount, description, date, receiptUrl } = req.body;
 
-    const expense = await Expense.findOne({ where: { id, userId } });
+    if (!userId || !Id) {
+      return res.status(400).json({ message: 'userId and Id are required in query params' });
+    }
+
+    const expense = await Expense.findOne({ where: { id: Id, userId } });
     if (!expense) return res.status(404).json({ message: 'Expense not found' });
 
     await expense.update({ amount, description, date, receiptUrl });
@@ -79,15 +74,16 @@ const updateExpense = async (req, res) => {
   }
 };
 
-// Delete expense
+// DELETE EXPENSE
 const deleteExpense = async (req, res) => {
   try {
-    const { param } = req.params;
-    const [userPart, idPart] = param.split('&');
-    const userId = userPart.split(':')[1];
-    const id = idPart.split(':')[1];
+    const { userId, Id } = req.query; // Get both from query params
 
-    const expense = await Expense.findOne({ where: { id, userId } });
+    if (!userId || !Id) {
+      return res.status(400).json({ message: 'userId and Id are required in query params' });
+    }
+
+    const expense = await Expense.findOne({ where: { id: Id, userId } });
     if (!expense) return res.status(404).json({ message: 'Expense not found' });
 
     await expense.destroy();
@@ -103,4 +99,3 @@ module.exports = {
   updateExpense,
   deleteExpense,
 };
-
