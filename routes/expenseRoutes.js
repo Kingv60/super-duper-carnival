@@ -16,7 +16,8 @@ router.use(authMiddleware);
 // Expense routes
 router.post('/', createExpense);       // Create expense
 router.get('/', getExpenses);          // Get all expenses
-router.put('/:id', updateExpense);     // Update expense by ID
-router.delete('/:id', deleteExpense);  // Delete expense by ID
+router.put('/:param', updateExpense);
+router.delete('/:param', deleteExpense);
 
 module.exports = router;
+
