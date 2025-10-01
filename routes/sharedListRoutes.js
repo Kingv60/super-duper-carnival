@@ -5,7 +5,9 @@ const {
   addSharedExpense,
   getSharedExpenses,
   deleteSharedList,
-  getUserLists
+  getUserLists,
+  updateSharedExpense,   // 👈 add this
+  deleteSharedExpense    // 👈 add this
 } = require('../controllers/sharedListController');
 
 const router = express.Router();
@@ -21,6 +23,12 @@ router.post('/expense', addSharedExpense);
 
 // Get expenses for a shared list
 router.get('/expenses', getSharedExpenses);
+
+// Update expense in shared list
+router.put('/expense', updateSharedExpense);   // 👈
+
+// Delete expense from shared list
+router.delete('/expense', deleteSharedExpense); // 👈
 
 // Delete a shared list by id
 router.delete('/', deleteSharedList);
