@@ -12,10 +12,7 @@ const sequelize = new Sequelize(
     logging: false,
     port: process.env.DB_PORT || 5432,
     dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false // ✅ Always enable SSL (Render requires it)
-      }
+      ssl: isProduction ? { require: true, rejectUnauthorized: false } : false
     }
   }
 );
@@ -32,3 +29,4 @@ const testConnection = async () => {
 testConnection();
 
 module.exports = sequelize;
+
