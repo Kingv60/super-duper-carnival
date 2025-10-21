@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize');
-
+const isProduction = process.env.NODE_ENV === 'production';
 const dialect = 'postgres';
 
 const sequelize = new Sequelize(
@@ -29,4 +29,5 @@ const testConnection = async () => {
 testConnection();
 
 module.exports = sequelize;
+
 
