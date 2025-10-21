@@ -1,6 +1,5 @@
 const { Sequelize } = require('sequelize');
 
-const isProduction = process.env.NODE_ENV === 'production';
 const dialect = 'postgres';
 
 const sequelize = new Sequelize(
@@ -13,7 +12,10 @@ const sequelize = new Sequelize(
     logging: false,
     port: process.env.DB_PORT || 5432,
     dialectOptions: {
-      ssl: isProduction ? { require: true, rejectUnauthorized: false } : false
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // ✅ Always enable SSL (Render requires it)
+      }
     }
   }
 );
@@ -21,15 +23,12 @@ const sequelize = new Sequelize(
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log('Database connected successfully.');
+    console.log('✅ Database connected successfully.');
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error('❌ Unable to connect to the database:', error);
   }
 };
 
 testConnection();
 
 module.exports = sequelize;
-
-
-
