@@ -9,6 +9,8 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
 const sharedListRoutes = require('./routes/sharedListRoutes');  
 const profileRoutes = require('./routes/profile'); // <-- added
+const userRoutes = require('./routes/userRoutes');
+
 
 const errorMiddleware = require('./middleware/errorMiddleware');
 const { sequelize } = require('./models');
@@ -37,7 +39,8 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/shared', sharedListRoutes);
-app.use('/api/profile', profileRoutes); // <-- added
+app.use('/api/profile', profileRoutes); 
+app.use('/api/users', userRoutes);// <-- added
 
 // 404 handler
 app.use((req, res) => {
