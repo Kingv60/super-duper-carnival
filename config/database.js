@@ -4,7 +4,7 @@ const dialect = 'postgres';
 
 const sequelize = new Sequelize(
   process.env.DB_NAME || 'safe_spend_database',
-  process.env.DB_USER || 'safe_spend_database_userr',
+  process.env.DB_USER || 'safe_spend_database_user',
   process.env.DB_PASSWORD || 'YoRnUda6wwWMvIOHwBIexgJ1IuXNwkcZ',
   {
     host: process.env.DB_HOST || 'dpg-d58c31buibrs73aki0k0-a.oregon-postgres.render.com',
@@ -29,6 +29,7 @@ const testConnection = async () => {
 testConnection();
 
 module.exports = sequelize;
+
 
 
 
