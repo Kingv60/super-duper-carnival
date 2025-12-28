@@ -3,11 +3,11 @@ const isProduction = process.env.NODE_ENV === 'production';
 const dialect = 'postgres';
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'minor_project_f15x',
-  process.env.DB_USER || 'minor_project_f15x_user',
-  process.env.DB_PASSWORD || 'lh7BH5R1RbBdtvBkPJy9GOJqTKxwQjBr',
+  process.env.DB_NAME || 'safe_spend_database',
+  process.env.DB_USER || 'safe_spend_database_userr',
+  process.env.DB_PASSWORD || 'YoRnUda6wwWMvIOHwBIexgJ1IuXNwkcZ',
   {
-    host: process.env.DB_HOST || 'dpg-d4ikfeggjchc73enl6g0-a.oregon-postgres.render.com',
+    host: process.env.DB_HOST || 'dpg-d58c31buibrs73aki0k0-a.oregon-postgres.render.com',
     dialect: dialect,
     logging: false,
     port: process.env.DB_PORT || 5432,
@@ -29,6 +29,7 @@ const testConnection = async () => {
 testConnection();
 
 module.exports = sequelize;
+
 
 
 
